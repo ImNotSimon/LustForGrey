@@ -117,21 +117,6 @@ namespace lustforgrey
                         renderer.mainTexture = StraightAssetBundle.LoadAsset<Texture2D>("straighsky.png"); //Sky
                         foreach (var source in Resources.FindObjectsOfTypeAll<Light>()) //This mess is for the lighting
                         {
-                            if (source.name == "Directional Light (4)") 
-                            {
-                                lulight1 = source;
-                                lulight1.color = new Color(0.231f, 0.231f, 0.231f, 1);
-                            }
-                            if (source.name == "Directional Light (5)")
-                            {
-                                lulight2 = source;
-                                lulight2.color = new Color(0.439f, 0.439f, 0.439f, 1);
-                            }
-                            if (source.name == "Directional Light (6)")
-                            {
-                                lulight3 = source;
-                                lulight3.color = new Color(0.439f, 0.439f, 0.439f, 1);
-                            }
                             if (source.color.r >= 1f && source.color.g >= 0f && source.color.b >= 0.9071f && source.color.a >= 1f)
                             {
                                 blulight1 = source;
@@ -161,6 +146,21 @@ namespace lustforgrey
                             {
                                 blulight2 = source;
                                 blulight2.color = new Color(0.5142f, 0.5726f, 1f, 1f);
+                            }
+                            if (source.name == "Directional Light (4)")
+                            {
+                                lulight1 = source;
+                                lulight1.color = new Color(0.231f, 0.231f, 0.231f, 1);
+                            }
+                            if (source.name == "Directional Light (5)")
+                            {
+                                lulight2 = source;
+                                lulight2.color = new Color(0.439f, 0.439f, 0.439f, 1);
+                            }
+                            if (source.name == "Directional Light (6)")
+                            {
+                                lulight3 = source;
+                                lulight3.color = new Color(0.439f, 0.439f, 0.439f, 1);
                             }
                         }
 
