@@ -1,23 +1,25 @@
-﻿using UMM;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using HarmonyLib;
+using BepInEx;
 using System.IO;
 using System;
 using System.Reflection;
 using System.Collections.Generic;
 
-namespace lustforgrey
+
+namespace LustForGrey
 {
-    [UKPlugin("simon.LustForGrey", "A Lust for Grey", "1.0.0", "Removes the Lust Layer's purple hue/changes it to black and white.", true, false)]
-    public class ALFG : UKMod
+    [BepInPlugin("ImNotSimon.LustForGrey", "LustForGrey", "1.2.0")]
+    public class Plugin : BaseUnityPlugin
     {
         private static Harmony harmony;
 
         internal static AssetBundle StraightAssetBundle;
 
-        public override void OnModLoaded()
+        private void Awake()
         {
-            Debug.Log("straight lust starting");
+            Debug.Log("grey lust starting");
 
             //load the asset bundle
             var assembly = Assembly.GetExecutingAssembly();
@@ -33,14 +35,9 @@ namespace lustforgrey
 
         public static string ModPath()
         {
-            return Assembly.GetExecutingAssembly().Location.Substring(0, Assembly.GetExecutingAssembly().Location.LastIndexOf(@"\"));
+            return Assembly.GetExecutingAssembly().Location.Substring(0, Assembly.GetExecutingAssembly().Location.LastIndexOf(Path.DirectorySeparatorChar));
         }
 
-        public override void OnModUnload()
-        {
-            harmony.UnpatchSelf();
-            base.OnModUnload();
-        }
 
         public static Light lulight1;
         public static Light lulight2;
@@ -50,14 +47,19 @@ namespace lustforgrey
         public static Color purpleColor = new Color(1f, 0f, 0.9071f, 1f);
         public static Color lightpurpleColor = new Color(0.895f, 0.5529f, 1f, 1f);
 
+
         [HarmonyPatch(typeof(StockMapInfo), "Awake")]
         internal class Patch00
         {
             static void Postfix(StockMapInfo __instance)
             {
+                Scene m_Scene;
+                string sceneName;
+                m_Scene = SceneManager.GetActiveScene();
+                sceneName = m_Scene.name;
                 foreach (var levelpic in Resources.FindObjectsOfTypeAll<SpriteRenderer>())
                 {
-                    if (levelpic.sprite.name == "2-1 In the Air Tonight") //Minos' corpse
+                    if (levelpic.sprite.name == "2-1 In the Air Tonight")
                     {
                         levelpic.sprite = StraightAssetBundle.LoadAsset<Sprite>("2-1 pic.png");
                     }
@@ -112,9 +114,15 @@ namespace lustforgrey
                     {
                         renderer.mainTexture = StraightAssetBundle.LoadAsset<Texture2D>("straightcity.png"); //City
                     }
-                    if (renderer.name == "LustSky")
+                    m_Scene = SceneManager.GetActiveScene();
+                    sceneName = m_Scene.name;
+                    if (sceneName == "55e17289238a28d488af367454267a0d" || sceneName == "6440445a799e22842babe18edf7da792" || sceneName == "4e039f071c1fba04a82a7b6b44feadc2" || sceneName == "e33f259a6c8241e46a5cbe4869cf059f")
+                    //this is the hackiest fix known to man but it works
                     {
-                        renderer.mainTexture = StraightAssetBundle.LoadAsset<Texture2D>("straighsky.png"); //Sky
+                        if (renderer.name == "LustSky")
+                        {
+                                renderer.mainTexture = StraightAssetBundle.LoadAsset<Texture2D>("straighsky.png"); //Sky
+                        }
                         foreach (var source in Resources.FindObjectsOfTypeAll<Light>()) //This mess is for the lighting
                         {
                             if (source.color.r >= 1f && source.color.g >= 0f && source.color.b >= 0.9071f && source.color.a >= 1f)
